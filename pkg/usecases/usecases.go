@@ -15,7 +15,7 @@ type OutputData struct {
 	Date   string
 	Views  int
 	Clicks int
-	Cost   int
+	Cost   float64
 	Cpc    float64
 	Cpm    float64
 }
@@ -61,30 +61,35 @@ func GetStatWithinFromAndTo(from, to, by string, rep r.StatsRepository) ([]Outpu
 		return nil, err
 	}
 	var result []OutputData
-	cpc := func(cost, clicks int) float64 {
+	tofloat := func(cost int) float64 {
+		result := float64(cost) / 100
+		return math.Round(result*100) / 100
+	}
+	cpc := func(cost float64, clicks int) float64 {
 		if clicks == 0 {
 			return 0.0
 		}
-		result := float64(cost) / float64(clicks)
+		result := cost / float64(clicks)
 		return math.Round(result*100) / 100
 		// return float64(cost) / float64(clicks)
 	}
-	cpm := func(cost, views int) float64 {
+	cpm := func(cost float64, views int) float64 {
 		if views == 0 {
 			return 0.0
 		}
-		result := (float64(cost) / float64(views)) * 1000
+		result := (cost / float64(views)) * 1000
 		return math.Round(result*100) / 100
 		// return (float64(cost) / float64(views)) * 1000
 	}
 	for _, value := range data {
+		newcost := tofloat(value.Cost)
 		result = append(result, OutputData{
 			Date:   value.Date,
 			Views:  value.Views,
 			Clicks: value.Clicks,
-			Cost:   value.Cost,
-			Cpc:    cpc(value.Cost, value.Clicks),
-			Cpm:    cpm(value.Cost, value.Views),
+			Cost:   newcost,
+			Cpc:    cpc(newcost, value.Clicks),
+			Cpm:    cpm(newcost, value.Views),
 		})
 	}
 	By(Prop(by, false)).Sort(result)

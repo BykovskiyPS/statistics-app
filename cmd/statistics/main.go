@@ -1,14 +1,8 @@
 package main
 
 import (
-	"database/sql"
 	"log"
-	"net/http"
-	r "statistics/pkg/repository"
 	"statistics/web"
-
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/gorilla/mux"
 )
 
 // POST   http://localhost:8080/stats?date=2021-02-02&views=10&clicks=10&cost=5.05
@@ -19,28 +13,21 @@ import (
 // curl -G -d "from=2020-01-01&to=2020-01-10&orderby=date" http://localhost:8080/stats
 // curl -X DELETE http://localhost:8080/stats
 
+// Func main should be as small as possible and do as little as possible by convention
 func main() {
-	// основные настройки к базе
-	dsn := "pavel:pavel@tcp(localhost:3306)/stats?"
-
-	db, err := sql.Open("mysql", dsn)
+	// Generate our config based on the config supplied
+	// by the user in the flags
+	cfgPath, err := web.ParseFlags()
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	db.SetMaxOpenConns(10)
-	err = db.Ping() // вот тут будет первое подключение к базе
+	cfg, err := web.NewConfig(cfgPath)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
+	// Init database
+	hdl := cfg.InitDB()
 
-	sdb := &r.StatsDB{DB: db}
-	w := web.WebserviceHandler{Rep: sdb}
-
-	r := mux.NewRouter()
-	r.HandleFunc("/stats", w.PostStats).Methods("POST")
-	r.HandleFunc("/stats", w.GetStats).Methods("GET")
-	r.HandleFunc("/stats", w.ClearStats).Methods("DELETE")
-	r.Use(w.ValidationMiddleware)
-	log.Println("starting server at :8080")
-	log.Fatal(http.ListenAndServe(":8080", r))
+	// Run the server
+	cfg.Run(hdl)
 }
