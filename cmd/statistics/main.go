@@ -13,15 +13,8 @@ import (
 // curl -G -d "from=2020-01-01&to=2020-01-10&orderby=date" http://localhost:8080/stats
 // curl -X DELETE http://localhost:8080/stats
 
-// Func main should be as small as possible and do as little as possible by convention
 func main() {
-	// Generate our config based on the config supplied
-	// by the user in the flags
-	cfgPath, err := web.ParseFlags()
-	if err != nil {
-		log.Fatal(err)
-	}
-	cfg, err := web.NewConfig(cfgPath)
+	cfg, err := web.NewConfig()
 	if err != nil {
 		log.Fatal(err)
 	}

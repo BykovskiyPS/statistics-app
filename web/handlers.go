@@ -109,7 +109,7 @@ func (h *WebserviceHandler) GetStats(w http.ResponseWriter, r *http.Request) {
 
 // ClearStats обработчик DELETE запроса. Запускает сценарий ClearRepository
 func (h *WebserviceHandler) ClearStats(w http.ResponseWriter, r *http.Request) {
-	log.Println("DELTE request")
+	log.Println("DELETE request")
 	err := uc.ClearRepository(h.Rep)
 	if err != nil {
 		log.Println("ClearStats: ", err)
