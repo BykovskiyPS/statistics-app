@@ -97,8 +97,8 @@ func GetStatWithinFromAndTo(from, to, by string, rep r.StatsRepository) ([]Outpu
 }
 
 // ClearRepository сценарий очистки таблицы
-func ClearRepository(rep r.StatsRepository) error {
-	return rep.TruncateRepository()
+func ClearRepository(rep r.StatsRepository) (int, error) {
+	return rep.DeleteFromRepository()
 }
 
 // Далее реализованы вспомогательные функции для сортировки по

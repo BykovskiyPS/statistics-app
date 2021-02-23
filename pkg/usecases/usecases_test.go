@@ -41,9 +41,9 @@ func (m *MockDB) FindByPeriodDate(from, to string) ([]r.Data, error) {
 		nil
 }
 
-func (m *MockDB) TruncateRepository() error {
+func (m *MockDB) DeleteFromRepository() (int, error) {
 	(*m) = make(map[string]r.Data)
-	return nil
+	return 0, nil
 }
 
 func TestAddUsecase(t *testing.T) {

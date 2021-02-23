@@ -12,7 +12,7 @@ type StatsRepository interface {
 	Storage(data Data) error
 	Update(data Data) error
 	FindByPeriodDate(from, to string) ([]Data, error)
-	TruncateRepository() error
+	DeleteFromRepository() (int, error)
 }
 
 // Data структура, приходящая с "верхнего" уровня (usecase).
@@ -102,13 +102,14 @@ func (h *StatsDB) FindByPeriodDate(from, to string) ([]Data, error) {
 	return result, nil
 }
 
-// TruncateRepository очищает таблицу
-// (удаляем и воссоздаем заново)
-func (h *StatsDB) TruncateRepository() error {
-	_, err := h.DB.Exec("TRUNCATE TABLE stat;")
+// DeleteFromRepository очищает таблицу
+// и возвращаем количество удаленных строк
+func (h *StatsDB) DeleteFromRepository() (int, error) {
+	result, err := h.DB.Exec("DELETE FROM stat;")
+	rows, err := result.RowsAffected()
 	if err != nil {
-		log.Println("Rep. TruncateRepository: ", err)
-		return err
+		log.Println("Rep. DeleteFromRepository: ", err)
+		return 0, err
 	}
-	return nil
+	return int(rows), nil
 }
