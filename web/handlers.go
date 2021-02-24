@@ -117,7 +117,7 @@ func (h *WebserviceHandler) ClearStats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-type", "application/json")
-	resp := `{"affected": ` + strconv.Itoa(result) + `}`
+	resp := `{"affected": "` + strconv.Itoa(result) + `"}`
 	log.Println("ClearStats returned: ", resp)
-	fmt.Fprintln(w, []byte(resp))
+	fmt.Fprintln(w, resp)
 }
