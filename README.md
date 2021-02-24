@@ -14,7 +14,7 @@ docker run --name db \
 mysql:5.7
 ```
 ```
-docker run --name stats-app -dp 8080:8080 --env-file env-app.txt app-image
+docker run --name stats-app -dp 8080:8080 --env-file env-app.txt --network net-app app-image
 ```
 
 ### **Note:**
